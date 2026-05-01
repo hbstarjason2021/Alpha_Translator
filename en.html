@@ -1,0 +1,1150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Alpha Translator — Market Intuition to Brain Expression</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #0e0f11;
+      --bg2: #16181c;
+      --bg3: #1e2026;
+      --border: rgba(255,255,255,0.08);
+      --border2: rgba(255,255,255,0.14);
+      --text: #e8e9eb;
+      --muted: #7a7d85;
+      --accent: #c8f135;
+      --info: #4db8ff;
+      --warning: #ffb347;
+      --danger: #ff6b6b;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background-color: var(--bg);
+      background-image:
+        linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+      background-size: 40px 40px;
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      padding-bottom: 80px;
+    }
+
+    .container { max-width: 780px; margin: 0 auto; padding: 0 20px; }
+
+    header {
+      border-bottom: 1px solid var(--border);
+      background: rgba(14,15,17,0.92);
+      backdrop-filter: blur(12px);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      padding: 14px 20px;
+    }
+
+    .header-inner {
+      max-width: 780px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .logo { display: flex; align-items: center; gap: 10px; }
+
+    .logo-icon {
+      width: 34px; height: 34px;
+      background: var(--accent);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-family: 'IBM Plex Mono', monospace;
+      font-weight: 700; font-size: 18px; color: #0e0f11; flex-shrink: 0;
+    }
+
+    .logo-text { font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; color: var(--text); }
+    .logo-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
+
+    .lang-btn {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      color: var(--muted); background: var(--bg3);
+      border: 1px solid var(--border2); border-radius: 6px;
+      padding: 6px 14px; cursor: pointer; text-decoration: none;
+      transition: all 0.15s; white-space: nowrap;
+    }
+    .lang-btn:hover { color: var(--text); border-color: var(--accent); }
+
+    .config-row { display: flex; gap: 10px; align-items: flex-end; flex-wrap: wrap; }
+    .field-group { display: flex; flex-direction: column; gap: 6px; }
+
+    .field-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      letter-spacing: 0.6px; text-transform: uppercase;
+    }
+
+    select, input[type="password"] {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 8px; color: var(--text);
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px; padding: 10px 12px;
+      outline: none; transition: border-color 0.15s;
+    }
+
+    select {
+      cursor: pointer; padding-right: 30px;
+      -webkit-appearance: none; appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%237a7d85' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 10px center;
+    }
+
+    select:focus, input[type="password"]:focus { border-color: var(--accent); }
+    #provider-select { min-width: 170px; }
+    .key-field { flex: 1; min-width: 220px; }
+    .key-field input { width: 100%; }
+
+    .get-key-link {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; color: var(--info);
+      text-decoration: none; white-space: nowrap;
+      padding-bottom: 11px; transition: opacity 0.15s;
+    }
+    .get-key-link:hover { opacity: 0.7; }
+
+    .chips-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 10px;
+    }
+
+    .chips { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    .chip {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 20px; color: var(--muted);
+      font-family: 'Inter', sans-serif;
+      font-size: 12px; padding: 7px 14px;
+      cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .chip:hover { border-color: var(--accent); color: var(--accent); background: rgba(200,241,53,0.06); }
+
+    textarea {
+      width: 100%; background: var(--bg2);
+      border: 1px solid var(--border2); border-radius: 12px;
+      color: var(--text); font-family: 'Inter', sans-serif;
+      font-size: 14px; line-height: 1.7; padding: 16px;
+      resize: vertical; min-height: 100px;
+      outline: none; transition: border-color 0.15s;
+    }
+    textarea:focus { border-color: var(--accent); }
+    textarea::placeholder { color: var(--muted); }
+
+    .input-footer { display: flex; justify-content: flex-end; margin-top: 12px; }
+
+    .btn-primary {
+      background: var(--accent); color: #0e0f11;
+      border: none; border-radius: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 13px; font-weight: 600;
+      padding: 12px 24px; cursor: pointer;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .btn-primary:hover { background: #d4f545; transform: translateY(-1px); }
+    .btn-primary:active { transform: translateY(0); }
+    .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+
+    .btn-secondary {
+      background: var(--bg3); color: var(--text);
+      border: 1px solid var(--border2); border-radius: 8px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 12px; font-weight: 500;
+      padding: 8px 16px; cursor: pointer; transition: all 0.15s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-secondary:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .btn-variant {
+      background: transparent; color: var(--accent);
+      border: 1px solid rgba(200,241,53,0.3); border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 11px; font-weight: 500;
+      padding: 6px 12px; cursor: pointer; transition: all 0.15s;
+      margin-top: 10px; white-space: nowrap;
+    }
+    .btn-variant:hover { background: rgba(200,241,53,0.08); border-color: var(--accent); }
+    .btn-variant:disabled { opacity: 0.4; cursor: not-allowed; }
+
+    .divider { height: 1px; background: var(--border); margin: 32px 0; }
+
+    .section-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 14px;
+    }
+
+    .result-section.hidden { display: none; }
+
+    .expression-card {
+      background: var(--bg2); border: 1px solid var(--border2);
+      border-radius: 12px; padding: 20px 24px; margin-bottom: 16px;
+      position: relative;
+    }
+
+    .expr-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; color: var(--muted);
+      text-transform: uppercase; letter-spacing: 0.6px; margin-bottom: 12px;
+    }
+
+    .expr-value {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 19px; font-weight: 600;
+      color: var(--accent); word-break: break-all; line-height: 1.5;
+    }
+
+    .expr-footer {
+      display: flex; align-items: flex-start;
+      justify-content: space-between; gap: 16px;
+      margin-top: 16px; padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    .logic-text { font-size: 13px; color: var(--muted); line-height: 1.6; flex: 1; }
+
+    .expr-actions { display: flex; gap: 8px; align-items: center; flex-shrink: 0; }
+
+    .copy-btn {
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 6px; color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      padding: 6px 14px; cursor: pointer; transition: all 0.15s; white-space: nowrap;
+    }
+    .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .copy-btn.copied { border-color: var(--accent); color: var(--accent); }
+
+    .fav-btn {
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 6px; color: var(--muted);
+      font-size: 14px; width: 32px; height: 32px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; transition: all 0.15s;
+    }
+    .fav-btn:hover { border-color: var(--warning); color: var(--warning); }
+    .fav-btn.active { border-color: var(--warning); color: var(--warning); background: rgba(255,179,71,0.08); }
+
+    /* Structure viz */
+    .viz-toggle {
+      background: transparent; color: var(--muted);
+      border: 1px solid var(--border); border-radius: 6px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      padding: 6px 14px; cursor: pointer; transition: all 0.15s;
+      margin-bottom: 12px;
+    }
+    .viz-toggle:hover { border-color: var(--border2); color: var(--text); }
+
+    .viz-container {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 16px;
+      margin-bottom: 16px; overflow-x: auto;
+      display: none;
+    }
+    .viz-container.open { display: block; }
+
+    .viz-legend {
+      display: flex; gap: 14px; flex-wrap: wrap;
+      margin-top: 12px; padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+    .viz-legend-item {
+      display: flex; align-items: center; gap: 5px;
+      font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted);
+    }
+    .viz-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* Mechanism */
+    .mechanism-card {
+      background: rgba(77,184,255,0.07);
+      border: 1px solid rgba(77,184,255,0.2);
+      border-radius: 10px; padding: 16px; margin-bottom: 16px;
+      font-size: 13px; color: var(--info); line-height: 1.65;
+    }
+    .mechanism-label {
+      font-family: 'IBM Plex Mono', monospace;
+      font-size: 10px; text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.7;
+    }
+
+    /* Steps */
+    .steps-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+    @media (max-width: 600px) { .steps-grid { grid-template-columns: 1fr; } }
+
+    .step-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .step-title { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); font-weight: 600; margin-bottom: 8px; }
+    .step-detail { font-size: 12.5px; color: var(--muted); line-height: 1.65; }
+    .step-detail code {
+      font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+      background: var(--bg3); border: 1px solid var(--border2);
+      border-radius: 4px; padding: 1px 5px; color: var(--info);
+    }
+
+    /* Params */
+    .params-grid { display: grid; grid-template-columns: repeat(5,1fr); gap: 8px; margin-bottom: 16px; }
+    @media (max-width: 600px) { .params-grid { grid-template-columns: repeat(2,1fr); } }
+
+    .param-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 8px; padding: 12px 8px; text-align: center; }
+    .param-name { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .param-value { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--text); font-weight: 500; }
+    .param-reason { font-size: 10px; color: var(--muted); margin-top: 5px; line-height: 1.4; text-align: left; }
+
+    /* Variants */
+    .variants-grid { display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px; }
+
+    .variant-card { background: var(--bg2); border: 1px solid var(--border); border-radius: 10px; padding: 16px; }
+    .variant-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+    .variant-meta { flex: 1; }
+    .variant-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+    .variant-desc { font-size: 12px; color: var(--muted); margin-bottom: 8px; line-height: 1.5; }
+    .variant-expr { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent); font-weight: 500; word-break: break-all; }
+
+    /* Tip */
+    .tip-card {
+      background: rgba(200,241,53,0.05);
+      border: 1px solid rgba(200,241,53,0.15);
+      border-radius: 10px; padding: 16px; margin-bottom: 20px;
+      font-size: 13px; color: var(--text); line-height: 1.65;
+    }
+    .tip-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.8; }
+
+    /* AI error (type=error) */
+    .ai-error-card {
+      background: rgba(255,179,71,0.07);
+      border: 1px solid rgba(255,179,71,0.25);
+      border-radius: 10px; padding: 20px;
+    }
+    .ai-error-reason { font-size: 13px; color: var(--warning); line-height: 1.65; margin-bottom: 14px; }
+    .ai-error-reason-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; opacity: 0.8; }
+    .ai-error-suggestion { font-size: 13px; color: var(--muted); line-height: 1.65; }
+    .ai-error-suggestion-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+
+    /* Network error */
+    .error-card {
+      background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.3);
+      border-radius: 10px; padding: 16px; color: var(--danger);
+      font-size: 13px; line-height: 1.65;
+    }
+
+    /* Loading */
+    .loading {
+      display: flex; align-items: center; justify-content: center;
+      gap: 10px; padding: 48px 0; color: var(--muted);
+      font-family: 'IBM Plex Mono', monospace; font-size: 13px;
+    }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid var(--border2); border-top-color: var(--accent);
+      border-radius: 50%; animation: spin 0.75s linear infinite; flex-shrink: 0;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* Favorites */
+    .favorites-section.hidden { display: none; }
+    .section-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+
+    .fav-list { display: flex; flex-direction: column; gap: 10px; }
+
+    .fav-item {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      display: flex; align-items: flex-start; gap: 12px;
+      transition: border-color 0.15s;
+    }
+    .fav-item:hover { border-color: var(--border2); }
+
+    .fav-item-content { flex: 1; min-width: 0; cursor: pointer; }
+    .fav-item-expr { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--accent); margin-bottom: 4px; word-break: break-all; }
+    .fav-item-input { font-size: 12px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+    .fav-delete {
+      background: transparent; border: none; color: var(--muted);
+      font-size: 16px; cursor: pointer; padding: 0 4px;
+      transition: color 0.15s; flex-shrink: 0; line-height: 1;
+    }
+    .fav-delete:hover { color: var(--danger); }
+
+    /* History */
+    .history-section.hidden { display: none; }
+    .history-list { display: flex; flex-direction: column; gap: 8px; }
+    .history-item {
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 12px 16px; cursor: pointer;
+      transition: all 0.15s; display: flex; align-items: center; gap: 12px; overflow: hidden;
+    }
+    .history-item:hover { border-color: var(--border2); background: var(--bg3); }
+    .history-time { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--muted); white-space: nowrap; min-width: 80px; }
+    .history-input { font-size: 12px; color: var(--muted); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .history-expr { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--accent); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 200px; flex-shrink: 0; }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+    .animate-in { animation: fadeIn 0.22s ease-out; }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">α</div>
+      <div>
+        <div class="logo-text">Alpha Translator</div>
+        <div class="logo-sub">Market Intuition → Brain Expression</div>
+      </div>
+    </div>
+    <a href="index.html" class="lang-btn">中文</a>
+  </div>
+</header>
+
+<div class="container" style="padding-top:28px;">
+
+  <section>
+    <div class="config-row">
+      <div class="field-group">
+        <label class="field-label" for="provider-select">Provider</label>
+        <select id="provider-select">
+          <option value="gemini">Google Gemini ✦ Free</option>
+          <option value="groq">Groq ✦ Free</option>
+          <option value="openai">OpenAI</option>
+          <option value="anthropic">Anthropic Claude</option>
+        </select>
+      </div>
+      <div class="field-group key-field">
+        <label class="field-label" for="api-key">API Key</label>
+        <input type="password" id="api-key" autocomplete="off" spellcheck="false">
+      </div>
+      <a id="get-key-link" href="#" target="_blank" rel="noopener" class="get-key-link"></a>
+    </div>
+  </section>
+
+  <section style="padding-top:24px;">
+    <div class="chips-label">Quick Examples</div>
+    <div class="chips" id="chips-container">
+      <button class="chip">Stocks that rose too much recently tend to reverse</button>
+      <button class="chip">A sudden spike in volume signals market attention</button>
+      <button class="chip">Stocks far below their 20-day average tend to bounce back</button>
+      <button class="chip">Stocks with recent analyst upgrades are worth buying</button>
+      <button class="chip">Stocks with sudden social media buzz tend to reverse</button>
+      <button class="chip">Generate a classic beginner-friendly Alpha factor for me</button>
+    </div>
+  </section>
+
+  <section style="padding-top:20px;">
+    <textarea id="user-input" rows="4" placeholder="Describe your market intuition in plain English...&#10;e.g. &quot;Stocks that surged over 3 days tend to pull back next week&quot;"></textarea>
+    <div class="input-footer">
+      <button class="btn-primary" id="translate-btn">
+        <span>Translate to Alpha</span>
+        <span>→</span>
+      </button>
+    </div>
+  </section>
+
+  <section class="result-section hidden" id="result-section">
+    <div class="divider"></div>
+    <div id="result-content"></div>
+  </section>
+
+  <section class="favorites-section hidden" id="favorites-section">
+    <div class="divider"></div>
+    <div class="section-header">
+      <div class="section-label">Favorites</div>
+      <button class="btn-secondary" id="clear-favs-btn">Clear All</button>
+    </div>
+    <div class="fav-list" id="fav-list"></div>
+  </section>
+
+  <section class="history-section hidden" id="history-section">
+    <div class="divider"></div>
+    <div class="section-header">
+      <div class="section-label">History</div>
+      <button class="btn-secondary" id="clear-history-btn">Clear</button>
+    </div>
+    <div class="history-list" id="history-list"></div>
+  </section>
+
+</div>
+
+<script>
+  // ── Provider config ────────────────────────────────────────────────────────
+
+  const PROVIDERS = {
+    gemini: {
+      placeholder: 'AIza... (free, no credit card required)',
+      keyLink: 'https://aistudio.google.com/app/apikey',
+      keyLinkText: 'Get Gemini Key (Free) →'
+    },
+    groq: {
+      placeholder: 'gsk_... (generous free daily quota)',
+      keyLink: 'https://console.groq.com/keys',
+      keyLinkText: 'Get Groq Key (Free Daily) →'
+    },
+    openai: {
+      placeholder: 'sk-...',
+      keyLink: 'https://platform.openai.com/api-keys',
+      keyLinkText: 'Get OpenAI Key →'
+    },
+    anthropic: {
+      placeholder: 'sk-ant-...',
+      keyLink: 'https://console.anthropic.com/settings/keys',
+      keyLinkText: 'Get Anthropic Key →'
+    }
+  };
+
+  // ── System prompt ──────────────────────────────────────────────────────────
+
+  const SYSTEM_PROMPT = `You are an Alpha factor expert for the WorldQuant Brain platform, helping beginners translate market intuitions into platform expressions.
+
+[Available Data Fields]
+Price & Volume: close, open, high, low, volume, returns, vwap, adv20 (20-day avg volume), cap
+Analyst: actual_eps_value_quarterly (actual quarterly EPS), analyst_revision_rank_derivative (analyst revision rank change)
+Fundamental: mdf_oey (earnings yield), operating_income (operating income)
+News / Short Interest: news_short_interest (short interest ratio)
+Options: implied_volatility_mean_30 (30-day implied vol), implied_volatility_mean_60 (60-day implied vol), pcr_vol_all (put/call volume ratio all expiries), option_breakeven_30 (30-day option breakeven price)
+Sentiment: scl12_sentiment (social media sentiment score), snt_buzz (social media discussion volume)
+
+[Operators]
+Time-series: ts_delta(x,d), ts_mean(x,d), ts_std_dev(x,d), ts_rank(x,d), ts_corr(x,y,d), ts_delay(x,d), ts_sum(x,d), ts_min(x,d), ts_max(x,d), ts_decay_linear(x,d), ts_regression(y,x,d), ts_arg_max(x,d), ts_arg_min(x,d)
+Cross-sectional: rank(x), zscore(x), normalize(x), scale(x), winsorize(x), group_neutralize(x,group), group_rank(x,group), group_zscore(x,group), group_mean(x,group)
+Conditional: ifelse(cond,x,y), trade_when(cond,x,y)
+Math: log(x), abs(x), sign(x), sqrt(x), min(x,y), max(x,y)
+Note: ts_min/ts_max may not be available in some platform versions; use ts_rank as an alternative. Previous day close: close - ts_delta(close, 1)
+
+[Parameter Selection Framework]
+
+When choosing parameters, first analyze the factor's characteristics, then reason about appropriate values. These are guiding principles, not rigid rules — use your judgment for unusual cases.
+
+Neutralization
+Core question: Does this factor capture relative differences across all stocks, or within sectors?
+- If the logic is "find the strongest/weakest across all stocks" → use Market
+- If the logic is "find relative strength within the same industry" (e.g. which stock in the sector has lower valuation) → use Sector or Subindustry
+- Fundamental factors (P/E, revenue growth) usually need within-sector comparison; tech and banks aren't directly comparable
+- Note: over-neutralization can remove real signal; Market is not always the worse choice
+
+Decay
+Core question: How many days until this signal fades?
+- Short-term price/volume signals (1–5 day logic) → Decay 0–2; signal fades fast, no smoothing needed
+- Medium-term momentum, analyst rating changes → Decay 3–6; signal has some persistence
+- Fundamental data (quarterly earnings) → Decay 10–20; data updates slowly, signal lasts longer
+- High Decay increases lag; low Decay increases turnover — balance the two
+
+Truncation
+Core question: Will the signal concentrate too heavily in a few stocks?
+- Default of 0.08 works for most cases
+- If the logic causes very few stocks to receive very high weights (e.g. strict conditions met by only a handful), lower to 0.05
+- Sentiment and news factors can have concentrated signals; stricter truncation may help
+
+Universe
+Core question: Does this signal work better on large-caps or small/mid-caps?
+- Price reversal, volume spikes → TOP3000; smaller stocks react more strongly
+- Fundamental factors → TOP3000 or TOP500 both work
+- Factors relying on analyst coverage or options data → consider TOP500, as this data is sparse for small-caps
+
+Note: Parameters interact. High Decay reduces turnover, but low Truncation disperses weights — consider them together. When writing the reason, explain WHY you chose the value, not just what it means.
+
+[Output Rules]
+If the user's description can be translated into a valid Alpha, return ONLY the following JSON (no markdown, no extra text):
+{"type":"success","expression":"rank(-ts_delta(close,5))","logic":"one sentence explaining the core logic","mechanism":"behavioral finance or financial economics principle explaining why this signal generates excess returns","steps":[{"step":"Step 1: Select data","detail":"explain why, wrap field names in backticks"},{"step":"Step 2: Extract signal","detail":"explain the operator, wrap operator names in backticks"},{"step":"Step 3: Normalize","detail":"explain how the output is normalized"}],"params":{"Universe":{"value":"TOP3000","reason":"explain why this value"},"Region":{"value":"USA","reason":"explain"},"Neutralization":{"value":"Market","reason":"explain"},"Decay":{"value":"0","reason":"explain"},"Truncation":{"value":"0.08","reason":"explain"}},"variants":[{"label":"Different data field","description":"one sentence on this variant's approach","expression":"variant expression"},{"label":"Different time window","description":"one sentence","expression":"variant expression"},{"label":"Added condition filter","description":"one sentence","expression":"variant expression"}],"tip":"one concrete suggestion to further improve this Alpha"}
+
+If the data the user describes does not exist on the platform, or the logic is too vague to translate, return ONLY:
+{"type":"error","reason":"specific explanation of why it cannot be translated, which data is unavailable","suggestion":"alternative suggestion pointing to data or logic that actually exists on the platform"}`;
+
+  // ── Tree visualization ─────────────────────────────────────────────────────
+
+  const DATA_FIELDS = new Set(['close','open','high','low','volume','returns','vwap','adv20','cap',
+    'actual_eps_value_quarterly','analyst_revision_rank_derivative','mdf_oey','operating_income',
+    'news_short_interest','implied_volatility_mean_30','implied_volatility_mean_60',
+    'pcr_vol_all','option_breakeven_30','scl12_sentiment','snt_buzz']);
+
+  const TS_OPS = new Set(['ts_delta','ts_mean','ts_std_dev','ts_rank','ts_corr','ts_delay',
+    'ts_sum','ts_min','ts_max','ts_decay_linear','ts_regression','ts_arg_max','ts_arg_min']);
+
+  const CROSS_OPS = new Set(['rank','zscore','normalize','scale','winsorize',
+    'group_neutralize','group_rank','group_zscore','group_mean']);
+
+  const MATH_OPS = new Set(['log','abs','sign','sqrt','min','max','ifelse','trade_when']);
+
+  const NODE_COLORS = { data:'#4ade80', ts:'#4db8ff', cross:'#fb923c', math:'#94a3b8', const:'#cbd5e1', other:'#7a7d85' };
+
+  const OP_HINTS = {
+    rank:'Cross-sectional rank (0 to 1)', zscore:'Cross-sectional standardize',
+    normalize:'Cross-sectional normalize', scale:'Scale to fixed total',
+    winsorize:'Winsorize extreme values', group_neutralize:'Sector/industry neutralize',
+    group_rank:'Rank within group', group_zscore:'Standardize within group',
+    group_mean:'Group mean', ts_delta:'Time-series diff: x(t)−x(t−d)',
+    ts_mean:'Moving average', ts_std_dev:'Moving std deviation',
+    ts_rank:'Time-series rank', ts_corr:'Time-series correlation',
+    ts_delay:'Time delay / lag', ts_sum:'Moving sum',
+    ts_min:'Moving minimum', ts_max:'Moving maximum',
+    ts_decay_linear:'Linear decay weighted avg', ts_arg_max:'Position of max value',
+    ts_arg_min:'Position of min value', ts_regression:'Time-series regression',
+    ifelse:'Conditional select', trade_when:'Conditional trade',
+    log:'Natural logarithm', abs:'Absolute value',
+    sign:'Sign function', sqrt:'Square root',
+    min:'Take lesser of two', max:'Take greater of two'
+  };
+
+  function splitArgs(s) {
+    var args = [], depth = 0, start = 0;
+    for (var i = 0; i < s.length; i++) {
+      if (s[i] === '(') depth++;
+      else if (s[i] === ')') depth--;
+      else if (s[i] === ',' && depth === 0) { args.push(s.slice(start, i).trim()); start = i + 1; }
+    }
+    var last = s.slice(start).trim();
+    if (last) args.push(last);
+    return args;
+  }
+
+  function parseExpr(s) {
+    s = (s || '').trim();
+    if (!s) return { name: '?', nodeType: 'other', children: [] };
+    if (s[0] === '-' && s.length > 1 && s[1] !== ' ') {
+      return { name: '−', nodeType: 'other', children: [parseExpr(s.slice(1))] };
+    }
+    var m = s.match(/^([A-Za-z_]\w*)\s*\((.+)\)$/s);
+    if (m) {
+      var name = m[1], args = splitArgs(m[2]);
+      var nt = TS_OPS.has(name) ? 'ts' : CROSS_OPS.has(name) ? 'cross' : MATH_OPS.has(name) ? 'math' : 'other';
+      return { name: name, nodeType: nt, children: args.map(parseExpr) };
+    }
+    var nt2 = DATA_FIELDS.has(s) ? 'data' : /^-?\d/.test(s) ? 'const' : 'other';
+    return { name: s, nodeType: nt2, children: [] };
+  }
+
+  function computeSlots(node) {
+    if (!node.children.length) { node.slots = 1; return; }
+    node.children.forEach(computeSlots);
+    node.slots = node.children.reduce(function(a, c) { return a + c.slots; }, 0);
+  }
+
+  function assignXY(node, x, y) {
+    node.y = y;
+    if (!node.children.length) { node.x = x + 0.5; return; }
+    var cx = x;
+    node.children.forEach(function(c) { assignXY(c, cx, y + 1); cx += c.slots; });
+    node.x = (x + cx) / 2;
+  }
+
+  function treeDepth(node) {
+    if (!node.children.length) return 0;
+    return 1 + Math.max.apply(null, node.children.map(treeDepth));
+  }
+
+  function allNodes(node, acc) {
+    acc = acc || [];
+    acc.push(node);
+    node.children.forEach(function(c) { allNodes(c, acc); });
+    return acc;
+  }
+
+  function renderTreeSVG(expr) {
+    var root;
+    try { root = parseExpr(expr); } catch(e) { return ''; }
+    computeSlots(root);
+    assignXY(root, 0, 0);
+    var depth = treeDepth(root);
+    var SLOT = 90, LEVEL = 76, R = 26, PAD = 24;
+    var svgW = Math.max(root.slots * SLOT, 120);
+    var svgH = (depth + 1) * LEVEL + PAD * 2;
+    var nodes = allNodes(root);
+    var lines = '', circles = '';
+
+    nodes.forEach(function(n) {
+      n.children.forEach(function(c) {
+        lines += '<line x1="' + (n.x * SLOT) + '" y1="' + (n.y * LEVEL + PAD + R) + '" x2="' + (c.x * SLOT) + '" y2="' + (c.y * LEVEL + PAD - R) + '" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>';
+      });
+    });
+
+    nodes.forEach(function(n) {
+      var cx = n.x * SLOT, cy = n.y * LEVEL + PAD;
+      var color = NODE_COLORS[n.nodeType] || '#7a7d85';
+      var label = n.name.length > 11 ? n.name.slice(0, 9) + '..' : n.name;
+      var hint = OP_HINTS[n.name] ? '\n' + OP_HINTS[n.name] : '';
+      circles += '<g class="tnode">' +
+        '<title>' + esc(n.name) + esc(hint) + '</title>' +
+        '<circle cx="' + cx + '" cy="' + cy + '" r="' + R + '" fill="' + color + '18" stroke="' + color + '" stroke-width="1.5"/>' +
+        '<text x="' + cx + '" y="' + cy + '" text-anchor="middle" dominant-baseline="middle" fill="' + color + '" font-size="9.5" font-family="IBM Plex Mono,monospace">' + esc(label) + '</text>' +
+        '</g>';
+    });
+
+    return '<svg width="' + svgW + '" height="' + svgH + '" viewBox="0 0 ' + svgW + ' ' + svgH + '" style="max-width:100%;display:block;">' +
+      lines + circles + '</svg>';
+  }
+
+  // ── State & elements ───────────────────────────────────────────────────────
+
+  var currentResult = null;
+  var currentInput  = '';
+
+  var providerSelect   = document.getElementById('provider-select');
+  var apiKeyInput      = document.getElementById('api-key');
+  var getKeyLink       = document.getElementById('get-key-link');
+  var chipsContainer   = document.getElementById('chips-container');
+  var userInput        = document.getElementById('user-input');
+  var translateBtn     = document.getElementById('translate-btn');
+  var resultSection    = document.getElementById('result-section');
+  var resultContent    = document.getElementById('result-content');
+  var favoritesSection = document.getElementById('favorites-section');
+  var favList          = document.getElementById('fav-list');
+  var clearFavsBtn     = document.getElementById('clear-favs-btn');
+  var historySection   = document.getElementById('history-section');
+  var historyList      = document.getElementById('history-list');
+  var clearHistoryBtn  = document.getElementById('clear-history-btn');
+
+  // ── Init ───────────────────────────────────────────────────────────────────
+
+  function init() {
+    var saved = localStorage.getItem('alpha_provider') || 'gemini';
+    providerSelect.value = saved;
+    applyProviderUI(saved);
+    apiKeyInput.value = localStorage.getItem('alpha_key_' + saved) || '';
+    renderFavorites();
+    renderHistory();
+  }
+
+  function applyProviderUI(p) {
+    var info = PROVIDERS[p];
+    apiKeyInput.placeholder = info.placeholder;
+    getKeyLink.href = info.keyLink;
+    getKeyLink.textContent = info.keyLinkText;
+  }
+
+  // ── Events ─────────────────────────────────────────────────────────────────
+
+  providerSelect.addEventListener('change', function() {
+    var p = this.value;
+    localStorage.setItem('alpha_provider', p);
+    applyProviderUI(p);
+    apiKeyInput.value = localStorage.getItem('alpha_key_' + p) || '';
+  });
+
+  apiKeyInput.addEventListener('input', function() {
+    localStorage.setItem('alpha_key_' + providerSelect.value, this.value.trim());
+  });
+
+  chipsContainer.addEventListener('click', function(e) {
+    if (e.target.classList.contains('chip')) {
+      userInput.value = e.target.textContent;
+      userInput.focus();
+    }
+  });
+
+  translateBtn.addEventListener('click', function() { doTranslate(userInput.value.trim()); });
+
+  clearFavsBtn.addEventListener('click', function() {
+    if (confirm('Clear all favorites?')) { localStorage.removeItem('alpha_favs'); renderFavorites(); }
+  });
+
+  clearHistoryBtn.addEventListener('click', function() {
+    if (confirm('Clear all history?')) { localStorage.removeItem('alpha_history'); renderHistory(); }
+  });
+
+  // ── API calls ──────────────────────────────────────────────────────────────
+
+  async function callAPI(provider, key, userText, systemPrompt) {
+    switch (provider) {
+      case 'gemini':    return callGemini(key, userText, systemPrompt);
+      case 'openai':    return callOpenAI(key, userText, systemPrompt);
+      case 'anthropic': return callAnthropic(key, userText, systemPrompt);
+      case 'groq':      return callGroq(key, userText, systemPrompt);
+      default: throw new Error('Unknown provider');
+    }
+  }
+
+  async function callGemini(key, userText, systemPrompt) {
+    var model = 'gemini-2.5-flash-lite-preview-06-17';
+    var url = 'https://generativelanguage.googleapis.com/v1beta/models/' + model + ':generateContent?key=' + key;
+    var res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        system_instruction: { parts: [{ text: systemPrompt }] },
+        contents: [{ role: 'user', parts: [{ text: userText }] }]
+      })
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error && data.error.message ? data.error.message : 'Gemini error (' + res.status + ')');
+    return data.candidates[0].content.parts[0].text;
+  }
+
+  async function callOpenAI(key, userText, systemPrompt) {
+    var res = await fetch('https://api.openai.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'gpt-4o-mini', messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userText }] })
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error && data.error.message ? data.error.message : 'OpenAI error (' + res.status + ')');
+    return data.choices[0].message.content;
+  }
+
+  async function callAnthropic(key, userText, systemPrompt) {
+    var res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': key,
+        'anthropic-version': '2023-06-01',
+        'anthropic-dangerous-direct-browser-access': 'true'
+      },
+      body: JSON.stringify({ model: 'claude-haiku-4-5', max_tokens: 2048, system: systemPrompt, messages: [{ role: 'user', content: userText }] })
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error && data.error.message ? data.error.message : 'Anthropic error (' + res.status + ')');
+    return data.content[0].text;
+  }
+
+  async function callGroq(key, userText, systemPrompt) {
+    var res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: 'llama-3.3-70b-versatile', messages: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userText }], temperature: 0.1 })
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error && data.error.message ? data.error.message : 'Groq error (' + res.status + ')');
+    return data.choices[0].message.content;
+  }
+
+  // ── Translation ────────────────────────────────────────────────────────────
+
+  async function doTranslate(text) {
+    var provider = providerSelect.value;
+    var key      = apiKeyInput.value.trim();
+
+    if (!key) { showNetworkError('Please enter your API Key first. Click the link above to get a free one.'); return; }
+    if (!text) { userInput.focus(); return; }
+
+    currentInput = text;
+    setLoading(true);
+    try {
+      var raw    = await callAPI(provider, key, text, SYSTEM_PROMPT);
+      var parsed = extractAndFixJSON(raw);
+      if (parsed.type === 'error') {
+        renderAIError(parsed);
+      } else {
+        currentResult = parsed;
+        renderResult(parsed, text);
+        saveHistory(text, parsed);
+      }
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        showNetworkError('The AI returned an unexpected format — please try again.');
+      } else if (err.message && err.message.toLowerCase().includes('fetch')) {
+        showNetworkError('Network connection failed. Please check your connection and try again.');
+      } else {
+        showNetworkError('Translation failed: ' + err.message + '\n\nPlease check your API Key or try again.');
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  async function translateVariant(varExpr, varLabel) {
+    var provider = providerSelect.value;
+    var key      = apiKeyInput.value.trim();
+    if (!key) { showNetworkError('Please enter your API Key first.'); return; }
+
+    setLoading(true);
+    try {
+      var userText = 'Please fully analyze and explain this Alpha expression (translate its logic directly, do not create a new factor): ' + varExpr;
+      var raw    = await callAPI(provider, key, userText, SYSTEM_PROMPT);
+      var parsed = extractAndFixJSON(raw);
+      if (parsed.type === 'error') {
+        renderAIError(parsed);
+      } else {
+        currentResult = parsed;
+        renderResult(parsed, varExpr);
+        saveHistory(varLabel + ': ' + varExpr, parsed);
+      }
+    } catch (err) {
+      if (err instanceof SyntaxError) {
+        showNetworkError('The AI returned an unexpected format — please try again.');
+      } else {
+        showNetworkError('Translation failed: ' + err.message);
+      }
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function extractAndFixJSON(text) {
+    var start = text.indexOf('{');
+    var end   = text.lastIndexOf('}');
+    if (start === -1 || end === -1) throw new Error('Unexpected response format — no JSON found');
+    var s = text.slice(start, end + 1);
+    s = s.replace(/\)\s*,\s*"variants"/g, '},"variants"');
+    s = s.replace(/\)\s*\}/g, '}}');
+    return JSON.parse(s);
+  }
+
+  // ── Rendering ──────────────────────────────────────────────────────────────
+
+  function setLoading(on) {
+    translateBtn.disabled = on;
+    if (on) {
+      resultSection.classList.remove('hidden');
+      resultContent.innerHTML = '<div class="loading"><div class="spinner"></div><span>Translating...</span></div>';
+    }
+  }
+
+  function showNetworkError(msg) {
+    resultSection.classList.remove('hidden');
+    resultContent.innerHTML = '<div class="error-card animate-in">' + esc(msg).replace(/\n/g, '<br>') + '</div>';
+  }
+
+  function renderAIError(data) {
+    resultSection.classList.remove('hidden');
+    resultContent.innerHTML =
+      '<div class="ai-error-card animate-in">' +
+        '<div class="ai-error-reason-label">⚠ Cannot Translate</div>' +
+        '<div class="ai-error-reason">' + esc(data.reason) + '</div>' +
+        '<div class="ai-error-suggestion-label">Alternative Suggestion</div>' +
+        '<div class="ai-error-suggestion">' + esc(data.suggestion) + '</div>' +
+      '</div>';
+  }
+
+  function renderResult(data, inputText) {
+    var params   = data.params   || {};
+    var steps    = data.steps    || [];
+    var variants = data.variants || [];
+
+    var paramsHtml = Object.entries(params).map(function(e) {
+      var raw = e[1];
+      var val    = (typeof raw === 'object' && raw !== null) ? (raw.value  || '') : String(raw);
+      var reason = (typeof raw === 'object' && raw !== null) ? (raw.reason || '') : '';
+      return '<div class="param-card">' +
+        '<div class="param-name">' + esc(e[0]) + '</div>' +
+        '<div class="param-value">' + esc(val) + '</div>' +
+        (reason ? '<div class="param-reason">' + esc(reason) + '</div>' : '') +
+      '</div>';
+    }).join('');
+
+    var stepsHtml = steps.map(function(s) {
+      return '<div class="step-card"><div class="step-title">' + esc(s.step) + '</div><div class="step-detail">' + highlightCode(s.detail) + '</div></div>';
+    }).join('');
+
+    var variantsHtml = variants.map(function(v, i) {
+      return '<div class="variant-card">' +
+        '<div class="variant-header">' +
+          '<div class="variant-meta">' +
+            '<div class="variant-label">' + esc(v.label) + '</div>' +
+            '<div class="variant-desc">' + esc(v.description) + '</div>' +
+            '<div class="variant-expr">' + esc(v.expression) + '</div>' +
+          '</div>' +
+          '<button class="btn-variant" data-vi="' + i + '">Use this variant →</button>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+
+    var svgHtml = renderTreeSVG(data.expression);
+
+    resultContent.innerHTML =
+      '<div class="animate-in">' +
+        '<div class="section-label">Result</div>' +
+        '<div class="expression-card">' +
+          '<div class="expr-label">Alpha Expression</div>' +
+          '<div class="expr-value">' + esc(data.expression) + '</div>' +
+          '<div class="expr-footer">' +
+            '<div class="logic-text">' + esc(data.logic) + '</div>' +
+            '<div class="expr-actions">' +
+              '<button class="copy-btn" id="copy-btn">Copy</button>' +
+              '<button class="fav-btn" id="fav-btn" title="Save to favorites">☆</button>' +
+            '</div>' +
+          '</div>' +
+        '</div>' +
+        (svgHtml ? '<button class="viz-toggle" id="viz-toggle">Show structure ▾</button><div class="viz-container" id="viz-container">' + svgHtml + '<div class="viz-legend"><div class="viz-legend-item"><div class="viz-dot" style="background:#4ade80"></div>Data field</div><div class="viz-legend-item"><div class="viz-dot" style="background:#4db8ff"></div>Time-series</div><div class="viz-legend-item"><div class="viz-dot" style="background:#fb923c"></div>Cross-sectional</div><div class="viz-legend-item"><div class="viz-dot" style="background:#94a3b8"></div>Math / other</div></div></div>' : '') +
+        '<div class="section-label">Financial Principle</div>' +
+        '<div class="mechanism-card"><div class="mechanism-label">Why it generates returns</div><div>' + esc(data.mechanism) + '</div></div>' +
+        '<div class="section-label">Translation Steps</div>' +
+        '<div class="steps-grid">' + stepsHtml + '</div>' +
+        '<div class="section-label">Suggested Parameters</div>' +
+        '<div class="params-grid">' + paramsHtml + '</div>' +
+        '<div class="section-label">Smart Variants</div>' +
+        '<div class="variants-grid">' + variantsHtml + '</div>' +
+        '<div class="section-label">Optimization Tip</div>' +
+        '<div class="tip-card"><div class="tip-label">Further Improvements</div><div>' + esc(data.tip) + '</div></div>' +
+      '</div>';
+
+    resultSection.classList.remove('hidden');
+
+    document.getElementById('copy-btn').addEventListener('click', function() {
+      copyText(data.expression);
+      this.textContent = 'Copied!'; this.classList.add('copied');
+      var self = this;
+      setTimeout(function() { self.textContent = 'Copy'; self.classList.remove('copied'); }, 2000);
+    });
+
+    var favBtn = document.getElementById('fav-btn');
+    var favId  = data.expression;
+    if (isFavorited(favId)) { favBtn.textContent = '★'; favBtn.classList.add('active'); }
+    favBtn.addEventListener('click', function() {
+      if (isFavorited(favId)) {
+        removeFavorite(favId);
+        favBtn.textContent = '☆'; favBtn.classList.remove('active');
+      } else {
+        saveFavorite({ id: favId, expression: data.expression, input: inputText || currentInput });
+        favBtn.textContent = '★'; favBtn.classList.add('active');
+      }
+      renderFavorites();
+    });
+
+    if (svgHtml) {
+      var vizToggle = document.getElementById('viz-toggle');
+      var vizContainer = document.getElementById('viz-container');
+      vizToggle.addEventListener('click', function() {
+        var open = vizContainer.classList.toggle('open');
+        vizToggle.textContent = open ? 'Hide structure ▴' : 'Show structure ▾';
+      });
+    }
+
+    resultContent.querySelectorAll('.btn-variant').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var vi = parseInt(btn.dataset.vi);
+        var v  = variants[vi];
+        if (v) { btn.disabled = true; translateVariant(v.expression, v.label); }
+      });
+    });
+  }
+
+  // ── Favorites ──────────────────────────────────────────────────────────────
+
+  function getFavorites() {
+    try { return JSON.parse(localStorage.getItem('alpha_favs') || '[]'); } catch(e) { return []; }
+  }
+
+  function isFavorited(id) { return getFavorites().some(function(f) { return f.id === id; }); }
+
+  function saveFavorite(item) {
+    var favs = getFavorites().filter(function(f) { return f.id !== item.id; });
+    favs.unshift(item);
+    localStorage.setItem('alpha_favs', JSON.stringify(favs));
+  }
+
+  function removeFavorite(id) {
+    var favs = getFavorites().filter(function(f) { return f.id !== id; });
+    localStorage.setItem('alpha_favs', JSON.stringify(favs));
+  }
+
+  function renderFavorites() {
+    var favs = getFavorites();
+    if (favs.length === 0) { favoritesSection.classList.add('hidden'); return; }
+    favoritesSection.classList.remove('hidden');
+    favList.innerHTML = favs.map(function(f) {
+      return '<div class="fav-item" data-id="' + esc(f.id) + '">' +
+        '<div class="fav-item-content">' +
+          '<div class="fav-item-expr">' + esc(f.expression) + '</div>' +
+          '<div class="fav-item-input">' + esc(f.input) + '</div>' +
+        '</div>' +
+        '<button class="fav-delete" data-del="' + esc(f.id) + '" title="Remove">×</button>' +
+      '</div>';
+    }).join('');
+
+    favList.querySelectorAll('.fav-item-content').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var id   = el.parentElement.dataset.id;
+        var item = getFavorites().find(function(f) { return f.id === id; });
+        if (item) { userInput.value = item.input; window.scrollTo({ top: 0, behavior: 'smooth' }); }
+      });
+    });
+
+    favList.querySelectorAll('.fav-delete').forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        removeFavorite(btn.dataset.del);
+        renderFavorites();
+        var favBtnEl = document.getElementById('fav-btn');
+        if (favBtnEl && currentResult && currentResult.expression === btn.dataset.del) {
+          favBtnEl.textContent = '☆'; favBtnEl.classList.remove('active');
+        }
+      });
+    });
+  }
+
+  // ── History ────────────────────────────────────────────────────────────────
+
+  function saveHistory(input, result) {
+    var h = getHistory();
+    h.unshift({ id: Date.now(), input: input, expression: result.expression, result: result });
+    localStorage.setItem('alpha_history', JSON.stringify(h.slice(0, 10)));
+    renderHistory();
+  }
+
+  function getHistory() {
+    try { return JSON.parse(localStorage.getItem('alpha_history') || '[]'); } catch(e) { return []; }
+  }
+
+  function renderHistory() {
+    var h = getHistory();
+    if (h.length === 0) { historySection.classList.add('hidden'); return; }
+    historySection.classList.remove('hidden');
+    historyList.innerHTML = h.map(function(item) {
+      return '<div class="history-item" data-id="' + item.id + '">' +
+        '<div class="history-time">' + fmtTime(item.id) + '</div>' +
+        '<div class="history-input">' + esc(item.input) + '</div>' +
+        '<div class="history-expr">' + esc(item.expression) + '</div>' +
+      '</div>';
+    }).join('');
+
+    historyList.querySelectorAll('.history-item').forEach(function(el) {
+      el.addEventListener('click', function() {
+        var id   = parseInt(el.dataset.id);
+        var item = getHistory().find(function(h) { return h.id === id; });
+        if (item) {
+          userInput.value = item.input;
+          currentResult   = item.result;
+          renderResult(item.result, item.input);
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+      });
+    });
+  }
+
+  // ── Utilities ──────────────────────────────────────────────────────────────
+
+  function esc(str) {
+    if (!str) return '';
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function highlightCode(detail) {
+    if (!detail) return '';
+    return esc(detail).replace(/`([^`]+)`/g, '<code>$1</code>');
+  }
+
+  function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      navigator.clipboard.writeText(text).catch(function() { fallbackCopy(text); });
+    } else { fallbackCopy(text); }
+  }
+
+  function fallbackCopy(text) {
+    var el = document.createElement('textarea');
+    el.value = text; el.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+    document.body.appendChild(el); el.select(); document.execCommand('copy'); document.body.removeChild(el);
+  }
+
+  function fmtTime(ts) {
+    var d = new Date(ts);
+    return (d.getMonth()+1)+'/'+d.getDate()+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  }
+
+  // ── Start ──────────────────────────────────────────────────────────────────
+  init();
+</script>
+</body>
+</html>
